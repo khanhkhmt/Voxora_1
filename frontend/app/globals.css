@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* ===== Voxora Design System — "The Precision Orchestrator" ===== */
+
+@theme {
+  /* Primary — Deep Teal */
+  --color-primary: #00685f;
+  --color-primary-container: #008378;
+  --color-primary-fixed: #89f5e7;
+  --color-primary-fixed-dim: #6bd8cb;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #f4fffc;
+
+  /* Secondary — Dark Indigo */
+  --color-secondary: #5654a8;
+  --color-secondary-container: #a7a5ff;
+  --color-secondary-fixed: #e2dfff;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #393689;
+
+  /* Tertiary — Warm Accent */
+  --color-tertiary: #924628;
+  --color-tertiary-container: #b05e3d;
+  --color-on-tertiary: #ffffff;
+
+  /* Surface System */
+  --color-surface: #f5faf8;
+  --color-surface-dim: #d6dbd9;
+  --color-surface-bright: #f5faf8;
+  --color-surface-container: #eaefed;
+  --color-surface-container-low: #f0f5f2;
+  --color-surface-container-high: #e4e9e7;
+  --color-surface-container-highest: #dee4e1;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #dee4e1;
+
+  /* On Surface */
+  --color-on-surface: #171d1c;
+  --color-on-surface-variant: #3d4947;
+
+  /* Outline */
+  --color-outline: #6d7a77;
+  --color-outline-variant: #bcc9c6;
+
+  /* Error */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+
+  /* Inverse */
+  --color-inverse-surface: #2c3130;
+  --color-inverse-on-surface: #edf2f0;
+  --color-inverse-primary: #6bd8cb;
+
+  /* Font families */
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+}
+
+/* ===== Base Styles ===== */
+body {
+  font-family: var(--font-body);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headline font utility */
+.font-headline {
+  font-family: var(--font-headline);
+}
+
+/* ===== Signature Gradient ===== */
+.voxora-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+}
+
+.voxora-gradient-text {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Ambient Shadow ===== */
+.shadow-ambient {
+  box-shadow: 0 8px 24px rgba(23, 29, 28, 0.06);
+}
+
+.shadow-ambient-lg {
+  box-shadow: 0 12px 32px -4px rgba(23, 29, 28, 0.08);
+}
+
+.shadow-ambient-xl {
+  box-shadow: 0 20px 48px -8px rgba(23, 29, 28, 0.1);
+}
+
+/* ===== Ghost Border ===== */
+.ghost-border {
+  border: 1px solid rgba(188, 201, 198, 0.2);
+}
+
+.ghost-border-focus {
+  border: 1px solid rgba(0, 104, 95, 0.3);
+}
+
+/* ===== Glassmorphism ===== */
+.glass {
+  background: rgba(222, 228, 225, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.glass-nav {
+  background: rgba(245, 250, 248, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ===== Smooth Transitions ===== */
+.transition-voxora {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Waveform gradient ===== */
+.waveform-gradient {
+  background: linear-gradient(90deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-low);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: var(--color-primary-fixed);
+  color: var(--color-on-surface);
+}

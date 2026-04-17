@@ -8,12 +8,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg voxora-gradient flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
-                  <path d="M8 13l2 2 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <span className="text-lg font-bold font-headline text-on-surface">Voxora</span>
+              <img src="/oriagent-icon.svg" alt="Oriagent" className="w-8 h-8 rounded-lg" />
+              <span className="text-lg font-bold font-headline text-on-surface">Oriagent<span className="text-primary">.</span></span>
             </div>
             <p className="text-sm text-on-surface-variant leading-relaxed">
               Your Voice, Engineered.
@@ -62,7 +58,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 pt-6 border-t border-outline-variant/15 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-on-surface-variant">
-            © 2026 Voxora. All rights reserved. Powered by VoxCPM2.
+            © 2026 Oriagent. All rights reserved. Powered by VoxCPM2.
           </p>
           <div className="flex items-center gap-4">
             <a href="#" className="text-on-surface-variant hover:text-primary transition-voxora">

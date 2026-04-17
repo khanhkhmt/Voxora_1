@@ -31,13 +31,9 @@ export default function Sidebar({ activeMode, onModeChange }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 py-5 border-b border-outline-variant/15">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg voxora-gradient flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-white">
-              <path d="M8 13l2 2 6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+          <img src="/oriagent-icon.svg" alt="Oriagent" className="w-8 h-8 rounded-lg" />
           <span className="text-lg font-bold tracking-tight font-headline text-on-surface">
-            Voxora <span className="text-xs font-normal text-on-surface-variant">Studio</span>
+            Oriagent<span className="text-primary">.</span> <span className="text-xs font-normal text-on-surface-variant">Studio</span>
           </span>
         </div>
       </div>

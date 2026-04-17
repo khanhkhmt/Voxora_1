@@ -42,15 +42,13 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 rounded-lg voxora-gradient flex items-center justify-center text-white text-base">
-              ✓
-            </div>
+            <img src="/oriagent-icon.svg" alt="Oriagent" className="w-8 h-8 rounded-lg" />
             <span className="text-xl font-bold font-headline text-on-surface">
-              Voxora
+              Oriagent<span className="text-primary">.</span>
             </span>
           </div>
           <p className="text-sm text-on-surface-variant">
-            Đăng nhập để truy cập Voxora Studio
+            Đăng nhập để truy cập Oriagent Studio
           </p>
         </div>
 

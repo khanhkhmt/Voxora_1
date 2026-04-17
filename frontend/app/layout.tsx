@@ -15,7 +15,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Voxora — Your Voice, Engineered.",
+  title: "Oriagent — Your Voice, Engineered.",
   description:
     "Transform text into lifelike speech with AI. Design unique voices, clone existing ones, or let AI craft the perfect tone. 30+ languages supported.",
   keywords: [

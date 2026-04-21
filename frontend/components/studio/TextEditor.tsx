@@ -23,7 +23,7 @@ const MODE_CONFIG: Record<string, {
 }> = {
   design: {
     title: "Voice Design",
-    textPlaceholder: "Nhập văn bản cần chuyển thành giọng nói...\n\nVí dụ: Xin chào, đây là giọng nói được tạo bởi trí tuệ nhân tạo Voxora.",
+    textPlaceholder: "Nhập văn bản cần chuyển thành giọng nói...\n\nVí dụ: Xin chào, đây là giọng nói được tạo bởi trí tuệ nhân tạo Oriagent.",
     controlLabel: "Mô tả giọng nói (Control Instruction)",
     controlPlaceholder: "Mô tả giọng nói mong muốn...\n\nVí dụ: A warm young female voice, gentle and sweet, speaking slowly",
     showControl: true,
@@ -111,7 +111,7 @@ export default function TextEditor({
     if (!audioBlob) return;
     const a = document.createElement("a");
     a.href = URL.createObjectURL(audioBlob);
-    a.download = `voxora_${activeMode}_${Date.now()}.${format}`;
+    a.download = `oriagent_${activeMode}_${Date.now()}.${format}`;
     a.click();
   };
 

@@ -23,7 +23,7 @@ export default function StudioPage() {
 
   useEffect(() => {
     const token = getToken();
-    const hasCookie = document.cookie.includes("voxora_token=");
+    const hasCookie = document.cookie.includes("oriagent_token=");
     if (!token && !hasCookie) {
       router.push("/login");
     } else {

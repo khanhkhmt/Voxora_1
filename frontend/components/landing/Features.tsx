@@ -56,7 +56,7 @@ export default function Features() {
             Ba chế độ tạo giọng nói
           </h2>
           <p className="mt-3 text-on-surface-variant text-lg max-w-2xl mx-auto">
-            Từ thiết kế giọng nói mới hoàn toàn đến nhân bản giọng nói chính xác — Voxora hỗ trợ tất cả.
+            Từ thiết kế giọng nói mới hoàn toàn đến nhân bản giọng nói chính xác — Oriagent hỗ trợ tất cả.
           </p>
         </div>
 

@@ -4,7 +4,7 @@ const TESTIMONIALS = [
     role: "Content Creator",
     avatar: "MT",
     rating: 5,
-    text: "Voxora giúp tôi tạo voiceover cho video YouTube chỉ trong vài phút. Chất lượng giọng nói cực kỳ tự nhiên, không ai tin là AI tạo ra!",
+    text: "Oriagent giúp tôi tạo voiceover cho video YouTube chỉ trong vài phút. Chất lượng giọng nói cực kỳ tự nhiên, không ai tin là AI tạo ra!",
   },
   {
     name: "Sarah Chen",
@@ -18,7 +18,7 @@ const TESTIMONIALS = [
     role: "Podcast Producer",
     avatar: "ĐN",
     rating: 5,
-    text: "Tính năng Voice Design thực sự ấn tượng — tôi chỉ cần mô tả giọng nói mong muốn và Voxora tạo ra chính xác những gì tôi cần.",
+    text: "Tính năng Voice Design thực sự ấn tượng — tôi chỉ cần mô tả giọng nói mong muốn và Oriagent tạo ra chính xác những gì tôi cần.",
   },
 ];
 
@@ -31,7 +31,7 @@ export default function Testimonials() {
             Người dùng nói gì?
           </h2>
           <p className="mt-3 text-on-surface-variant text-lg">
-            Hàng nghìn người sáng tạo tin dùng Voxora mỗi ngày
+            Hàng nghìn người sáng tạo tin dùng Oriagent mỗi ngày
           </p>
         </div>
 

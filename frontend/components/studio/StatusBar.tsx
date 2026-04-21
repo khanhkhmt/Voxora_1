@@ -23,7 +23,7 @@ export default function StatusBar() {
         setDetail("VoxCPM2 · GPU Available");
       } else {
         setStatus("offline");
-        setDetail("VoxCPM offline — chạy Kaggle notebook");
+        setDetail("VoxCPM offline — kiểm tra AI Engine");
       }
     } catch {
       setStatus("error");

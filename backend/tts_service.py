@@ -1,5 +1,5 @@
 """
-Voxora Backend — TTS Service
+Oriagent Backend — TTS Service
 Connects to VoxCPM Gradio API on Kaggle via Cloudflare tunnel.
 """
 import logging
@@ -10,10 +10,10 @@ from typing import Optional
 from gradio_client import Client, handle_file
 from config import get_settings
 
-logger = logging.getLogger("voxora.tts")
+logger = logging.getLogger("oriagent.tts")
 
 # Output directory for generated audio
-AUDIO_OUTPUT_DIR = Path(tempfile.gettempdir()) / "voxora_audio"
+AUDIO_OUTPUT_DIR = Path(tempfile.gettempdir()) / "oriagent_audio"
 AUDIO_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -51,13 +51,11 @@ class TTSService:
                 "status": "ready" if success else "error",
                 "model": "VoxCPM2",
                 "engine": "gradio_api",
-                "url": get_settings().voxcpm_gradio_url,
             }
         return {
             "status": "ready",
             "model": "VoxCPM2",
             "engine": "gradio_api",
-            "url": get_settings().voxcpm_gradio_url,
         }
 
     def generate(

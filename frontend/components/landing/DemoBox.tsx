@@ -17,7 +17,7 @@ const DEMO_SAMPLES: AudioSample[] = [
     label: "Warm Female",
     language: "Vietnamese",
     description: "Giọng nữ ấm áp, nhẹ nhàng",
-    text: "Xin chào, chào mừng bạn đến với Voxora — nền tảng tạo giọng nói AI hàng đầu.",
+    text: "Xin chào, chào mừng bạn đến với Oriagent — nền tảng tạo giọng nói AI hàng đầu.",
     emoji: "🇻🇳",
   },
   {
@@ -58,7 +58,7 @@ export default function DemoBox() {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold font-headline text-on-surface">
-            🎧 Trải nghiệm Voxora
+            🎧 Trải nghiệm Oriagent
           </h2>
           <p className="mt-3 text-on-surface-variant text-lg">
             Nghe thử giọng nói AI được tạo bởi VoxCPM2

@@ -1,23 +1,24 @@
 """
-Voxora Backend — Configuration (Pydantic Settings)
+Oriagent Backend — Configuration (Pydantic Settings)
 """
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # Auth
+    # Auth — MUST be set via .env or environment variables
     admin_username: str = "admin"
-    admin_password: str = "voxora2026"
-    jwt_secret: str = "voxora-secret-key-change-in-production-2026"
+    admin_password: str  # No default — forces .env or env var
+    jwt_secret: str      # No default — forces .env or env var
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440  # 24 hours
 
-    # VoxCPM
-    voxcpm_gradio_url: str = "https://anderson-glenn-polls-interaction.trycloudflare.com"
+    # VoxCPM AI Engine (Kaggle Gradio via Cloudflare Tunnel)
+    voxcpm_gradio_url: str = "http://localhost:8808"
 
-    # CORS
+    # CORS — comma-separated origins
     frontend_url: str = "http://localhost:3000"
+    allowed_origins: str = "http://localhost:3000"
 
     class Config:
         env_file = ".env"
@@ -27,3 +28,4 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
+

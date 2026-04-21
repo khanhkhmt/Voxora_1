@@ -1,6 +1,6 @@
 /**
- * Voxora Frontend — API Client
- * Kết nối tới FastAPI backend (localhost:8001)
+ * Oriagent Frontend — API Client
+ * Kết nối tới FastAPI backend
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
@@ -32,17 +32,17 @@ export async function apiLogin(
 }
 
 export function saveToken(token: string) {
-  document.cookie = `voxora_token=${token}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
-  localStorage.setItem("voxora_token", token);
+  document.cookie = `oriagent_token=${token}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
+  localStorage.setItem("oriagent_token", token);
 }
 
 export function getToken(): string | null {
-  return localStorage.getItem("voxora_token");
+  return localStorage.getItem("oriagent_token");
 }
 
 export function removeToken() {
-  document.cookie = "voxora_token=; path=/; max-age=0";
-  localStorage.removeItem("voxora_token");
+  document.cookie = "oriagent_token=; path=/; max-age=0";
+  localStorage.removeItem("oriagent_token");
 }
 
 // ---------- Health ----------
@@ -51,7 +51,6 @@ export interface HealthResponse {
   status: string;
   model: string;
   engine: string;
-  url: string;
 }
 
 export async function apiHealthCheck(): Promise<HealthResponse> {

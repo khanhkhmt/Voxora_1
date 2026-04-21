@@ -1,6 +1,26 @@
-launch.json
-__pycache__
-voxcpm.egg-info
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Build output
+frontend/.next/
+frontend/out/
+
+# Environment & Secrets
+.env
+backend/.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
 .DS_Store
-./pretrained_models/
-app_local.py
+Thumbs.db
+
+# Misc
+*.log

@@ -1,5 +1,5 @@
 """
-Voxora Backend — Auth utilities (JWT)
+Oriagent Backend — Auth utilities (JWT)
 """
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt

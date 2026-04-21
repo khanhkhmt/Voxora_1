@@ -23,14 +23,7 @@ export default function LoginPage() {
       saveToken(data.access_token);
       router.push("/studio");
     } catch (err) {
-      // Fallback: mock auth khi backend offline
-      if (username === "admin" && password === "voxora2026") {
-        const mockToken = "mock_jwt_token_" + Date.now();
-        saveToken(mockToken);
-        router.push("/studio");
-      } else {
-        setError(err instanceof Error ? err.message : "Đăng nhập thất bại");
-      }
+      setError(err instanceof Error ? err.message : "Đăng nhập thất bại");
     } finally {
       setLoading(false);
     }

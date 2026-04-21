@@ -1,5 +1,5 @@
 """
-Voxora Backend — FastAPI Main Application
+Oriagent Backend — FastAPI Main Application
 """
 import logging
 import os
@@ -9,10 +9,13 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 from typing import Optional
 
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, status
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from config import get_settings
 from auth import create_access_token, verify_token
@@ -23,10 +26,13 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(name)s | %(levelname)s | %(message)s",
 )
-logger = logging.getLogger("voxora")
+logger = logging.getLogger("oriagent")
+
+# Rate limiter
+limiter = Limiter(key_func=get_remote_address)
 
 # Temp dir for uploaded audio files
-UPLOAD_DIR = Path(tempfile.gettempdir()) / "voxora_uploads"
+UPLOAD_DIR = Path(tempfile.gettempdir()) / "oriagent_uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -34,7 +40,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Connect to VoxCPM on startup."""
-    logger.info("🚀 Starting Voxora Backend...")
+    logger.info("🚀 Starting Oriagent Backend...")
 
     tts = get_tts_service()
     connected = tts.connect()
@@ -45,22 +51,29 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("👋 Shutting down Voxora Backend")
+    logger.info("👋 Shutting down Oriagent Backend")
 
 
 # ---------- App ----------
 app = FastAPI(
-    title="Voxora API",
+    title="Oriagent API",
     description="AI Text-to-Speech Backend powered by VoxCPM",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# CORS
+# Rate limiter
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# CORS — read allowed origins from config (comma-separated)
 settings = get_settings()
+origins = [o.strip() for o in settings.allowed_origins.split(",") if o.strip()]
+if settings.frontend_url not in origins:
+    origins.append(settings.frontend_url)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://localhost:3000", "http://localhost:3001"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -94,7 +107,6 @@ class HealthResponse(BaseModel):
     status: str
     model: str
     engine: str
-    url: str
 
 
 # ---------- Routes ----------
@@ -126,7 +138,9 @@ async def get_current_user(username: str = Depends(verify_token)):
 
 
 @app.post("/api/tts/generate")
+@limiter.limit("5/minute")
 async def generate_tts(
+    request: Request,
     text: str = Form(...),
     mode: str = Form("design"),
     control_instruction: str = Form(""),
@@ -203,7 +217,7 @@ async def generate_tts(
             return FileResponse(
                 path=output_path,
                 media_type="audio/wav",
-                filename=f"voxora_{mode}_{uuid.uuid4().hex[:8]}.wav",
+                filename=f"oriagent_{mode}_{uuid.uuid4().hex[:8]}.wav",
             )
         else:
             raise HTTPException(status_code=500, detail="Audio file not found after generation")

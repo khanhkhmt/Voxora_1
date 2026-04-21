@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Voxora | Your Voice, Engineered.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "on-background": "#171d1c",
+                      "primary-fixed-dim": "#6bd8cb",
+                      "on-surface-variant": "#3d4947",
+                      "secondary-fixed": "#e2dfff",
+                      "inverse-surface": "#2c3130",
+                      "surface-tint": "#006a61",
+                      "tertiary": "#924628",
+                      "on-primary-container": "#f4fffc",
+                      "surface-container-low": "#f0f5f2",
+                      "surface-bright": "#f5faf8",
+                      "surface-container": "#eaefed",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#b05e3d",
+                      "secondary-container": "#a7a5ff",
+                      "on-tertiary-container": "#fffbff",
+                      "surface-container-highest": "#dee4e1",
+                      "surface-variant": "#dee4e1",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#6bd8cb",
+                      "on-tertiary-fixed": "#370e00",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#3e3c8f",
+                      "background": "#f5faf8",
+                      "surface-container-high": "#e4e9e7",
+                      "on-secondary-container": "#393689",
+                      "error": "#ba1a1a",
+                      "primary-container": "#008378",
+                      "on-secondary-fixed": "#100563",
+                      "on-tertiary-fixed-variant": "#773215",
+                      "primary-fixed": "#89f5e7",
+                      "secondary": "#5654a8",
+                      "surface": "#f5faf8",
+                      "on-primary-fixed-variant": "#005049",
+                      "primary": "#00685f",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#ffdbce",
+                      "on-surface": "#171d1c",
+                      "outline-variant": "#bcc9c6",
+                      "surface-dim": "#d6dbd9",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed": "#00201d",
+                      "outline": "#6d7a77",
+                      "inverse-on-surface": "#edf2f0"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(0, 104, 95, 0.08) 0%, rgba(86, 84, 168, 0.05) 50%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/60 backdrop-blur-xl transition-all duration-300 h-20 flex items-center">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-6 w-full">
+<div class="flex items-center gap-12">
+<a class="text-2xl font-bold tracking-tighter text-teal-800 dark:text-teal-300 font-headline" href="#">Voxora</a>
+<div class="hidden md:flex items-center gap-8 font-headline text-sm font-medium tracking-tight">
+<a class="text-slate-600 hover:text-teal-600 transition-all duration-300" href="#">Product</a>
+<a class="text-slate-600 hover:text-teal-600 transition-all duration-300" href="#">Features</a>
+<a class="text-slate-600 hover:text-teal-600 transition-all duration-300" href="#">Pricing</a>
+<a class="text-slate-600 hover:text-teal-600 transition-all duration-300" href="#">Docs</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-primary hover:opacity-80 transition-all duration-300 border border-outline-variant/20">
+<img alt="Google Icon" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkCxJwPNShVxEYhY6n8O-pcRKm64LyRs6kGQ62cIyPSEX41-rj8T0C7uMgXtWebF3Upt5LNYpn6qIe_lacRhUw94gofnnFPKUWv07Rc2M_mttCtB-CYayrsZ7u3Xxwqabs8mqrvhQqAUY0_WLVH5et-Ng6ZKdRN7fjXomOF5xlun0F2G9K8ezn6Fb4PPGoMBOxxvCWVqp1JLsGSRZrPZNO0Y-wSy3_SvXVPiaAhAi6R3ZDPVlv9Uzy9-4EoSzCfxfN2AQiBJij_3Y"/>
+                    Login with Google
+                </button>
+<button class="px-6 py-2.5 rounded-xl text-sm font-bold bg-gradient-to-br from-primary to-primary-container text-on-primary hover:opacity-90 shadow-lg shadow-primary/10 transition-all active:scale-95 duration-200">
+                    Get Started Free
+                </button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative overflow-hidden hero-gradient pt-24 pb-32">
+<div class="max-w-7xl mx-auto px-6 relative z-10">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold uppercase tracking-wider mb-8">
+<span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+                        The Future of Audio
+                    </div>
+<h1 class="text-6xl md:text-7xl font-extrabold font-headline text-on-background leading-[1.1] tracking-tight mb-8">
+                        Transform Text Into <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Lifelike Speech</span>
+</h1>
+<p class="text-lg md:text-xl text-on-surface-variant leading-relaxed mb-10 max-w-2xl">
+                        Create stunning AI voices in 30+ languages. Design unique voices, clone existing ones, or let AI craft the perfect tone for your project.
+                    </p>
+<div class="flex flex-col sm:flex-row items-center gap-4">
+<button class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-bold bg-gradient-to-br from-primary to-primary-container text-on-primary hover:opacity-90 shadow-xl shadow-primary/20 transition-all active:scale-95 duration-200">
+                            Start Free with Google
+                        </button>
+<button class="w-full sm:w-auto px-8 py-4 rounded-xl text-base font-semibold text-primary border border-outline-variant/30 hover:bg-surface-container-low transition-all active:scale-95 duration-200 flex items-center justify-center gap-2">
+                            Try Demo Below <span class="material-symbols-outlined text-lg">arrow_downward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Abstract background shape -->
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-0 left-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-[100px]"></div>
+</section>
+<!-- Demo TTS Box -->
+<section class="py-20 bg-surface">
+<div class="max-w-5xl mx-auto px-6">
+<div class="glass-card rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-on-background/5 border border-white/50 relative overflow-hidden">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+<div>
+<h2 class="text-2xl font-bold font-headline mb-2 flex items-center gap-3">
+<span class="text-3xl">🎧</span> Experience Voxora
+                            </h2>
+<p class="text-on-surface-variant">Listen to pre-generated samples — Sign in to create your own</p>
+</div>
+<div class="bg-primary/5 px-4 py-2 rounded-full">
+<span class="text-primary font-bold text-sm tracking-wide">STUDIO PREVIEW</span>
+</div>
+</div>
+<!-- Audio Sample Cards Grid -->
+<div class="grid grid-cols-1 gap-6 mb-12">
+<!-- Sample 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 group hover:shadow-lg transition-all duration-300">
+<div class="w-full md:w-1/3">
+<p class="text-sm font-medium italic text-on-surface mb-2">"The morning sun painted the sky in shades of gold and amber..."</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-primary px-2 py-0.5 rounded bg-primary/10">Warm Female</span>
+<span class="text-xs font-medium text-on-surface-variant">Vietnamese</span>
+</div>
+</div>
+<div class="flex-1 w-full bg-surface-container-low h-12 rounded-full relative flex items-center px-4 overflow-hidden">
+<div class="flex items-end gap-[2px] h-6 flex-1 opacity-50">
+<div class="w-1 h-3 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-6 bg-primary rounded-full"></div><div class="w-1 h-2 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-6 bg-primary rounded-full"></div><div class="w-1 h-3 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-6 bg-primary rounded-full"></div><div class="w-1 h-3 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-2 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-3 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-6 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-3 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div><div class="w-1 h-2 bg-primary rounded-full"></div><div class="w-1 h-6 bg-primary rounded-full"></div><div class="w-1 h-5 bg-primary rounded-full"></div><div class="w-1 h-4 bg-primary rounded-full"></div>
+</div>
+<button class="ml-4 w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Sample 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 group hover:shadow-lg transition-all duration-300">
+<div class="w-full md:w-1/3">
+<p class="text-sm font-medium italic text-on-surface mb-2">"Space is not a void; it is a canvas of infinite possibilities..."</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-secondary px-2 py-0.5 rounded bg-secondary/10">Deep Male</span>
+<span class="text-xs font-medium text-on-surface-variant">English</span>
+</div>
+</div>
+<div class="flex-1 w-full bg-surface-container-low h-12 rounded-full relative flex items-center px-4 overflow-hidden">
+<div class="flex items-end gap-[2px] h-6 flex-1 opacity-50">
+<div class="w-1 h-2 bg-secondary rounded-full"></div><div class="w-1 h-4 bg-secondary rounded-full"></div><div class="w-1 h-6 bg-secondary rounded-full"></div><div class="w-1 h-3 bg-secondary rounded-full"></div><div class="w-1 h-5 bg-secondary rounded-full"></div><div class="w-1 h-4 bg-secondary rounded-full"></div><div class="w-1 h-2 bg-secondary rounded-full"></div><div class="w-1 h-6 bg-secondary rounded-full"></div><div class="w-1 h-5 bg-secondary rounded-full"></div><div class="w-1 h-3 bg-secondary rounded-full"></div><div class="w-1 h-4 bg-secondary rounded-full"></div><div class="w-1 h-6 bg-secondary rounded-full"></div><div class="w-1 h-2 bg-secondary rounded-full"></div><div class="w-1 h-5 bg-secondary rounded-full"></div><div class="w-1 h-3 bg-secondary rounded-full"></div><div class="w-1 h-4 bg-secondary rounded-full"></div><div class="w-1 h-6 bg-secondary rounded-full"></div><div class="w-1 h-5 bg-secondary rounded-full"></div><div class="w-1 h-2 bg-secondary rounded-full"></div><div class="w-1 h-3 bg-secondary rounded-full"></div><div class="w-1 h-4 bg-secondary rounded-full"></div><div class="w-1 h-6 bg-secondary rounded-full"></div><div class="w-1 h-5 bg-secondary rounded-full"></div><div class="w-1 h-3 bg-secondary rounded-full"></div>
+</div>
+<button class="ml-4 w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Sample 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6 group hover:shadow-lg transition-all duration-300">
+<div class="w-full md:w-1/3">
+<p class="text-sm font-medium italic text-on-surface mb-2">"Innovation starts with a single idea and the courage to act..."</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-tertiary-container px-2 py-0.5 rounded bg-tertiary/10">Young Energetic</span>
+<span class="text-xs font-medium text-on-surface-variant">Japanese</span>
+</div>
+</div>
+<div class="flex-1 w-full bg-surface-container-low h-12 rounded-full relative flex items-center px-4 overflow-hidden">
+<div class="flex items-end gap-[2px] h-6 flex-1 opacity-50">
+<div class="w-1 h-6 bg-tertiary-container rounded-full"></div><div class="w-1 h-2 bg-tertiary-container rounded-full"></div><div class="w-1 h-5 bg-tertiary-container rounded-full"></div><div class="w-1 h-3 bg-tertiary-container rounded-full"></div><div class="w-1 h-4 bg-tertiary-container rounded-full"></div><div class="w-1 h-6 bg-tertiary-container rounded-full"></div><div class="w-1 h-5 bg-tertiary-container rounded-full"></div><div class="w-1 h-2 bg-tertiary-container rounded-full"></div><div class="w-1 h-4 bg-tertiary-container rounded-full"></div><div class="w-1 h-6 bg-tertiary-container rounded-full"></div><div class="w-1 h-3 bg-tertiary-container rounded-full"></div><div class="w-1 h-5 bg-tertiary-container rounded-full"></div><div class="w-1 h-2 bg-tertiary-container rounded-full"></div><div class="w-1 h-4 bg-tertiary-container rounded-full"></div><div class="w-1 h-6 bg-tertiary-container rounded-full"></div><div class="w-1 h-3 bg-tertiary-container rounded-full"></div><div class="w-1 h-5 bg-tertiary-container rounded-full"></div><div class="w-1 h-2 bg-tertiary-container rounded-full"></div><div class="w-1 h-4 bg-tertiary-container rounded-full"></div><div class="w-1 h-6 bg-tertiary-container rounded-full"></div><div class="w-1 h-5 bg-tertiary-container rounded-full"></div><div class="w-1 h-3 bg-tertiary-container rounded-full"></div>
+</div>
+<button class="ml-4 w-10 h-10 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center transition-transform hover:scale-105 active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Locked Banner -->
+<div class="bg-primary/5 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<p class="text-sm font-medium text-on-surface leading-tight max-w-sm">
+                                🔒 Want to generate your own? Sign in with Google to unlock full studio access and custom controls.
+                            </p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-on-background text-on-primary hover:opacity-90 transition-all duration-300">
+<img alt="Google Icon" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVleej5x3xSxUsKQQUMm6oUYgm9v_V8-Rf4mosXrt9lPh6feIT7ApS8wqB-3vxOhFUQp-DS71uq_bpg3wGIrEwbUd6NpIoxTPA5MnAqIIMjnWFFYtyokAacBMx9VD2tlynTqvk52dBRX16jUYBmkOGbjyCsHHxHHXNLaYXSg8Xg_YtWWe74raoVEndLqk_uZ_GddEDJSLFwHyufNWDuu6rB2mtvjkQdpY34H7IH-8yRAMg-98hq5rI9WmNRpgXDQm8OVm5WeLikLc"/>
+                            Login with Google
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Feature Cards -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-6 text-center mb-16">
+<h2 class="text-4xl md:text-5xl font-extrabold font-headline mb-4 tracking-tight">Three Powerful Modes</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Precision engineering for every vocal requirement, from creative design to exact cloning.</p>
+</div>
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Mode 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl group hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl">
+<div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-on-primary transition-all duration-500">
+<span class="material-symbols-outlined text-3xl">palette</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-3">🎨 Voice Design</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">Describe any voice in natural language. "A wise old man with a slight gravel and a calm pace." Our AI builds it instantly.</p>
+<div class="h-1.5 w-12 bg-primary/20 rounded-full group-hover:w-full transition-all duration-500"></div>
+</div>
+<!-- Mode 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl group hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl">
+<div class="w-14 h-14 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary mb-6 group-hover:bg-secondary group-hover:text-on-secondary transition-all duration-500">
+<span class="material-symbols-outlined text-3xl">tune</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-3">🎛️ Voice Cloning</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">Clone any voice with style control. Upload a 30-second clip and generate speech that maintains the speaker's unique identity.</p>
+<div class="h-1.5 w-12 bg-secondary/20 rounded-full group-hover:w-full transition-all duration-500"></div>
+</div>
+<!-- Mode 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl group hover:-translate-y-2 transition-all duration-300 shadow-sm hover:shadow-xl">
+<div class="w-14 h-14 bg-tertiary-container/10 rounded-2xl flex items-center justify-center text-tertiary-container mb-6 group-hover:bg-tertiary-container group-hover:text-on-tertiary-container transition-all duration-500">
+<span class="material-symbols-outlined text-3xl">settings_voice</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-3">🎙️ Ultimate Cloning</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">Reproduce every vocal nuance. The highest fidelity cloning available for high-stakes professional audio productions.</p>
+<div class="h-1.5 w-12 bg-tertiary-container/20 rounded-full group-hover:w-full transition-all duration-500"></div>
+</div>
+</div>
+</section>
+<!-- Use Cases -->
+<section class="py-24 bg-surface">
+<div class="max-w-7xl mx-auto px-6 text-center">
+<h2 class="text-3xl font-extrabold font-headline mb-12">Designed for Creators Everywhere</h2>
+<div class="flex flex-wrap justify-center gap-4">
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">Content Creation</span>
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">E-Learning</span>
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">Audiobooks</span>
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">Customer Service</span>
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">Animation</span>
+<span class="px-8 py-3 rounded-full bg-surface-container-high font-bold text-sm text-on-surface-variant hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors duration-300">Gaming</span>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 bg-surface-container-low overflow-hidden">
+<div class="max-w-7xl mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Testimonial 1 -->
+<div class="relative bg-surface p-10 rounded-3xl shadow-sm border border-outline-variant/10">
+<span class="absolute -top-4 -left-4 text-7xl text-primary/10 font-serif">“</span>
+<p class="text-lg font-medium text-on-surface mb-8 relative z-10 italic">
+                            Voxora has completely changed our podcast production. The ability to generate high-fidelity ad reads in multiple languages has increased our revenue by 40%.
+                        </p>
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="professional woman in her 30s smiling gently, soft office background, bright and airy lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFyPXfQO1L9WwtZISnoa3vlsDTFenMk_iBD-JHFgtOMM8sT4agqrOm9-LmvdFgMGF7lDBvNg3sG5XPh5lsW15NCeseePysvw-GylsKiZ9Qod-p7P_L0sqJPBh1mxUyzYlLyLJnXZC_acihbDdna6qs6i6KDvu_edVFuqilhH0M6WYnwmZVsa1n_9EtXEQAztIgEb8RerGaAX6FthF0d9XawSTSr0NgYEAcCh1o97v_AaGXjFPBuroiohPtobCK0vSfqP3sOuw8LIs"/>
+<div>
+<h4 class="font-bold">Sarah Jenkins</h4>
+<p class="text-xs text-on-surface-variant">Director of Audio, WaveMedia</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="relative bg-surface p-10 rounded-3xl shadow-sm border border-outline-variant/10">
+<span class="absolute -top-4 -left-4 text-7xl text-secondary/10 font-serif">“</span>
+<p class="text-lg font-medium text-on-surface mb-8 relative z-10 italic">
+                            The voice cloning quality is indistinguishable from reality. We saved hundreds of hours of recording time on our latest AAA title using Voxora for incidental dialogue.
+                        </p>
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="man with beard in a creative studio environment, cinematic warm lighting, modern professional portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyUXLKgsQvAqyxJBBc_SK-qpd11vmdCTsyDJUpCIWy9A_4rZsRRejAaP1wFsS7j0tzDnFjkl0ImYfCU2u6UKNUOAGbl_Ge2BFhPmxqhQ7M06d6g99d-CRgK4NJGkjnbT4fsOR7Wb2gdaYJ-Y6PzQRwtXo2fGcr9H-m_ryhApDDYPbTBT9-WcAfPnVNrtIsch6Mz3kvmXx_q89DKxpQDMOVaabZuAldh3pBrhQVa44h5oOD0BcCLYlkb8fDe8LDDBN0ikSIKi4dLXQ"/>
+<div>
+<h4 class="font-bold">Marcus Thorne</h4>
+<p class="text-xs text-on-surface-variant">Lead Developer, Echo Studios</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Section -->
+<section class="py-24 bg-surface">
+<div class="max-w-5xl mx-auto px-6 text-center">
+<div class="bg-gradient-to-br from-primary to-secondary p-1 rounded-[2.5rem]">
+<div class="bg-surface py-16 px-8 rounded-[2.4rem] flex flex-col items-center">
+<h2 class="text-4xl md:text-5xl font-extrabold font-headline mb-6 tracking-tight">Ready to Engineer Your Voice?</h2>
+<p class="text-lg text-on-surface-variant mb-10 max-w-xl">Join 10,000+ creators who are building the future of audio content with Voxora's precise AI engine.</p>
+<button class="px-10 py-5 rounded-2xl text-lg font-bold bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-2xl shadow-primary/30 transition-all hover:scale-105 active:scale-95">
+                            Get Started for Free
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low py-12 border-t border-teal-900/5">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto px-8 gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<a class="text-xl font-bold text-teal-800 font-headline" href="#">Voxora</a>
+<p class="font-inter text-xs tracking-normal text-slate-500">© 2024 Voxora AI. Precision Orchestration for Voice.</p>
+</div>
+<div class="flex items-center gap-8 font-inter text-xs tracking-normal">
+<a class="text-slate-500 hover:text-teal-500 transition-transform hover:translate-y-[-2px]" href="#">Privacy Policy</a>
+<a class="text-slate-500 hover:text-teal-500 transition-transform hover:translate-y-[-2px]" href="#">Terms of Service</a>
+<a class="text-slate-500 hover:text-teal-500 transition-transform hover:translate-y-[-2px]" href="#">Twitter</a>
+<a class="text-slate-500 hover:text-teal-500 transition-transform hover:translate-y-[-2px]" href="#">Status</a>
+</div>
+</div>
+</footer>
+</body></html>

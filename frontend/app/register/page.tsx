@@ -30,12 +30,33 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
 
       if (error) throw error;
+
+      // If session exists, user is auto-confirmed → go to studio
+      if (data.session) {
+        router.push("/studio");
+        return;
+      }
+
+      // If no session but user exists → auto-login with same credentials
+      if (data.user) {
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (!loginError) {
+          router.push("/studio");
+          return;
+        }
+      }
+
+      // Fallback: redirect to studio (signUp may auto-login)
       router.push("/studio");
     } catch (err: any) {
       setError(err.message || "Đăng ký thất bại");

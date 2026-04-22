@@ -3,7 +3,7 @@ Oriagent Backend — Auth utilities (Supabase JWT verification)
 Verifies JWT tokens issued by Supabase Auth and retrieves user role from profiles table.
 """
 import logging
-from jose import JWTError, jwt
+import jwt as pyjwt  # PyJWT
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import create_client, Client
@@ -38,8 +38,8 @@ def get_current_user(
     token = credentials.credentials
 
     try:
-        # Decode JWT using Supabase JWT secret
-        payload = jwt.decode(
+        # Decode JWT using Supabase JWT secret (PyJWT)
+        payload = pyjwt.decode(
             token,
             settings.supabase_jwt_secret,
             algorithms=["HS256"],
@@ -54,11 +54,17 @@ def get_current_user(
                 detail="Token không hợp lệ: thiếu user ID",
             )
 
-    except JWTError as e:
+    except pyjwt.ExpiredSignatureError:
+        logger.warning("JWT expired")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token đã hết hạn",
+        )
+    except pyjwt.InvalidTokenError as e:
         logger.warning(f"JWT verification failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token hết hạn hoặc không hợp lệ",
+            detail="Token không hợp lệ",
         )
 
     # Query role from profiles table

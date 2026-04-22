@@ -1,15 +1,11 @@
 /**
  * Oriagent Frontend — Supabase Client
- * Browser-side client for authentication
+ * Browser-side client for authentication (uses localStorage for session)
  */
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 
-export function createSupabaseClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
-
-// Singleton instance for client components
-export const supabase = createSupabaseClient();
+// Standard client for browser - stores session in localStorage (reliable)
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);

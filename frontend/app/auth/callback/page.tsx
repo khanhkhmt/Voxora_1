@@ -5,81 +5,64 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 /**
- * OAuth callback page — handles both PKCE and implicit flows.
- * After Google/OAuth login, Supabase redirects here with either:
- * - ?code=xxx (PKCE flow) → needs exchangeCodeForSession
- * - #access_token=xxx (implicit flow) → auto-detected by client
+ * OAuth callback page — handles implicit flow.
+ * After Google OAuth, Supabase redirects here with tokens in URL hash:
+ *   /auth/callback#access_token=xxx&refresh_token=yyy&...
+ * The Supabase client auto-detects the hash and stores the session.
  */
 export default function AuthCallbackPage() {
   const router = useRouter();
   const [status, setStatus] = useState("Đang xử lý đăng nhập...");
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    let unsubscribe: (() => void) | null = null;
-
-    const handleCallback = async () => {
-      try {
-        // 1) Try PKCE flow: exchange code from URL query params
-        const url = new URL(window.location.href);
-        const code = url.searchParams.get("code");
-
-        if (code) {
-          setStatus("Đang xác thực...");
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-          if (!error && data.session) {
+    // Listen for auth state change — Supabase auto-detects tokens from URL hash
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+          if (session) {
             setStatus("Đăng nhập thành công! Đang chuyển hướng...");
             router.replace("/studio");
-            return;
-          }
-
-          if (error) {
-            console.error("PKCE exchange failed:", error.message);
-            // Don't return - fall through to other methods
           }
         }
+      }
+    );
 
-        // 2) Check if session already exists (implicit flow or already authenticated)
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+    // Also check if session already exists (immediate check)
+    const checkSession = async () => {
+      // Small delay to let Supabase process URL hash
+      await new Promise((r) => setTimeout(r, 500));
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setStatus("Đăng nhập thành công! Đang chuyển hướng...");
+        router.replace("/studio");
+        return;
+      }
+
+      // Also try PKCE code exchange as fallback
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get("code");
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
           setStatus("Đăng nhập thành công! Đang chuyển hướng...");
           router.replace("/studio");
           return;
         }
-
-        // 3) Listen for auth state change (handles hash fragment processing)
-        setStatus("Đang chờ xác thực...");
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          (event, session) => {
-            if (session) {
-              subscription.unsubscribe();
-              setStatus("Đăng nhập thành công! Đang chuyển hướng...");
-              router.replace("/studio");
-            }
-          }
-        );
-        unsubscribe = () => subscription.unsubscribe();
-
-        // 4) Timeout after 15 seconds
-        timeout = setTimeout(() => {
-          if (unsubscribe) unsubscribe();
-          setStatus("Đăng nhập thất bại. Đang chuyển về trang đăng nhập...");
-          setTimeout(() => router.replace("/login?error=auth_timeout"), 2000);
-        }, 15000);
-
-      } catch (err) {
-        console.error("Auth callback exception:", err);
-        setStatus("Có lỗi xảy ra. Đang chuyển về trang đăng nhập...");
-        setTimeout(() => router.replace("/login?error=auth_callback_failed"), 2000);
       }
     };
 
-    handleCallback();
+    checkSession();
+
+    // Timeout after 10 seconds — redirect to login
+    const timeout = setTimeout(() => {
+      setStatus("Đăng nhập thất bại. Đang chuyển về...");
+      setTimeout(() => router.replace("/login?error=auth_timeout"), 1500);
+    }, 10000);
 
     return () => {
-      if (timeout) clearTimeout(timeout);
-      if (unsubscribe) unsubscribe();
+      subscription.unsubscribe();
+      clearTimeout(timeout);
     };
   }, [router]);
 

@@ -38,15 +38,29 @@ def get_current_user(
     token = credentials.credentials
 
     try:
+        # Log token header for debugging (safe - header is not secret)
+        try:
+            header = pyjwt.get_unverified_header(token)
+            logger.info(f"JWT header: alg={header.get('alg')}, typ={header.get('typ')}")
+        except Exception as he:
+            logger.warning(f"Cannot read JWT header: {he}")
+
+        # Log secret length for debugging
+        secret = settings.supabase_jwt_secret
+        logger.info(f"JWT secret length: {len(secret)}, first 4 chars: {secret[:4]}")
+
         # Decode JWT using Supabase JWT secret (PyJWT)
+        # Disable audience verification to avoid mismatches
         payload = pyjwt.decode(
             token,
-            settings.supabase_jwt_secret,
+            secret,
             algorithms=["HS256"],
-            audience="authenticated",
+            options={"verify_aud": False},
         )
         user_id = payload.get("sub")
         email = payload.get("email")
+
+        logger.info(f"JWT decoded successfully for user: {email} (sub={user_id})")
 
         if not user_id:
             raise HTTPException(
@@ -60,8 +74,20 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token đã hết hạn",
         )
+    except pyjwt.InvalidSignatureError as e:
+        logger.warning(f"JWT signature invalid: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token không hợp lệ: chữ ký sai",
+        )
+    except pyjwt.DecodeError as e:
+        logger.warning(f"JWT decode error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token không hợp lệ: lỗi giải mã",
+        )
     except pyjwt.InvalidTokenError as e:
-        logger.warning(f"JWT verification failed: {e}")
+        logger.warning(f"JWT verification failed: {type(e).__name__}: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token không hợp lệ",

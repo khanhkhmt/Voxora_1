@@ -4,8 +4,6 @@
  */
 import { createClient } from "@supabase/supabase-js";
 
-// Standard client for browser - stores session in localStorage
-// PKCE flow is the standard and required by Supabase for secure auth
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -13,7 +11,9 @@ export const supabase = createClient(
     auth: {
       flowType: "pkce",
       autoRefreshToken: true,
-      detectSessionInUrl: true,
+      // FALSE: we exchange the code MANUALLY in /auth/callback/page.tsx
+      // This prevents the race condition where both auto + manual try to exchange
+      detectSessionInUrl: false,
       persistSession: true,
     },
   }

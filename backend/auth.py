@@ -111,10 +111,18 @@ def get_current_user(
         profile = result.data
 
         if not profile:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Profile không tồn tại. Vui lòng liên hệ admin.",
-            )
+            # Auto-create profile for new users
+            logger.info(f"Creating new profile for user: {email}")
+            new_profile = {
+                "id": user_id,
+                "email": email,
+                "role": "user",
+                "is_active": True,
+                "full_name": "",
+                "avatar_url": "",
+            }
+            supabase.table("profiles").insert(new_profile).execute()
+            profile = new_profile
 
         if not profile.get("is_active", True):
             raise HTTPException(

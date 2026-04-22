@@ -1,9 +1,11 @@
 """
 Oriagent Backend — Auth utilities (Supabase JWT verification)
-Verifies JWT tokens issued by Supabase Auth and retrieves user role from profiles table.
+Verifies JWT tokens issued by Supabase Auth using JWKS public keys (ES256).
+Retrieves user role from profiles table.
 """
 import logging
 import jwt as pyjwt  # PyJWT
+from jwt import PyJWKClient
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from supabase import create_client, Client
@@ -15,6 +17,7 @@ security = HTTPBearer()
 
 # Cache Supabase admin client (service_role)
 _supabase_admin: Client | None = None
+_jwks_client: PyJWKClient | None = None
 
 
 def get_supabase_admin() -> Client:
@@ -26,41 +29,43 @@ def get_supabase_admin() -> Client:
     return _supabase_admin
 
 
+def get_jwks_client() -> PyJWKClient:
+    """Get JWKS client for verifying Supabase JWT tokens (ES256)."""
+    global _jwks_client
+    if _jwks_client is None:
+        settings = get_settings()
+        jwks_url = f"{settings.supabase_url}/auth/v1/.well-known/jwks.json"
+        _jwks_client = PyJWKClient(jwks_url)
+        logger.info(f"JWKS client initialized: {jwks_url}")
+    return _jwks_client
+
+
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict:
     """
     Verify Supabase JWT token and return user info.
+    Uses JWKS public keys to verify ES256 tokens.
     Returns: {"id": str, "email": str, "role": str}
-    Used as FastAPI dependency.
     """
-    settings = get_settings()
     token = credentials.credentials
 
     try:
-        # Log token header for debugging (safe - header is not secret)
-        try:
-            header = pyjwt.get_unverified_header(token)
-            logger.info(f"JWT header: alg={header.get('alg')}, typ={header.get('typ')}")
-        except Exception as he:
-            logger.warning(f"Cannot read JWT header: {he}")
+        # Get signing key from JWKS endpoint (auto-cached by PyJWKClient)
+        jwks_client = get_jwks_client()
+        signing_key = jwks_client.get_signing_key_from_jwt(token)
 
-        # Log secret length for debugging
-        secret = settings.supabase_jwt_secret
-        logger.info(f"JWT secret length: {len(secret)}, first 4 chars: {secret[:4]}")
-
-        # Decode JWT using Supabase JWT secret (PyJWT)
-        # Disable audience verification to avoid mismatches
+        # Decode and verify JWT using the public key
         payload = pyjwt.decode(
             token,
-            secret,
-            algorithms=["HS256"],
-            options={"verify_aud": False},
+            signing_key.key,
+            algorithms=["ES256"],
+            audience="authenticated",
         )
         user_id = payload.get("sub")
         email = payload.get("email")
 
-        logger.info(f"JWT decoded successfully for user: {email} (sub={user_id})")
+        logger.info(f"JWT verified OK for user: {email}")
 
         if not user_id:
             raise HTTPException(
@@ -91,6 +96,12 @@ def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token không hợp lệ",
+        )
+    except Exception as e:
+        logger.error(f"JWT verification unexpected error: {type(e).__name__}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Lỗi xác thực token",
         )
 
     # Query role from profiles table

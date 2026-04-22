@@ -5,13 +5,13 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Standard client for browser - stores session in localStorage
-// Using implicit flow: tokens returned directly in URL hash (simpler, more reliable)
+// PKCE flow is the standard and required by Supabase for secure auth
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   {
     auth: {
-      flowType: "implicit",
+      flowType: "pkce",
       autoRefreshToken: true,
       detectSessionInUrl: true,
       persistSession: true,

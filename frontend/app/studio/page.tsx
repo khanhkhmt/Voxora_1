@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getToken } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/studio/Sidebar";
 import TextEditor from "@/components/studio/TextEditor";
 import RightPanel from "@/components/studio/RightPanel";
@@ -22,13 +22,26 @@ export default function StudioPage() {
   const [ditSteps, setDitSteps] = useState(10);
 
   useEffect(() => {
-    const token = getToken();
-    const hasCookie = document.cookie.includes("oriagent_token=");
-    if (!token && !hasCookie) {
-      router.push("/login");
-    } else {
-      setIsAuthorized(true);
-    }
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+      } else {
+        setIsAuthorized(true);
+      }
+    };
+    checkAuth();
+
+    // Listen for auth changes (e.g., token refresh, logout from another tab)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_OUT" || !session) {
+          router.push("/login");
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, [router]);
 
   // Reset audio when switching modes

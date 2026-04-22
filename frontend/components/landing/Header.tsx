@@ -37,7 +37,7 @@ export default function Header() {
             Đăng nhập
           </Link>
           <Link
-            href="/login"
+            href="/register"
             className="text-sm font-semibold text-on-primary px-5 py-2.5 rounded-xl voxora-gradient shadow-ambient hover:shadow-ambient-lg transition-voxora hover:scale-[1.02] active:scale-[0.98]"
           >
             Bắt đầu miễn phí

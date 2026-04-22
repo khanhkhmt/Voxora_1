@@ -1,5 +1,6 @@
 """
 Oriagent Backend — FastAPI Main Application
+Supabase Auth + Admin/User RBAC
 """
 import logging
 import os
@@ -18,7 +19,7 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 from config import get_settings
-from auth import create_access_token, verify_token
+from auth import get_current_user, require_admin, get_supabase_admin
 from tts_service import get_tts_service
 
 # Logging
@@ -57,8 +58,8 @@ async def lifespan(app: FastAPI):
 # ---------- App ----------
 app = FastAPI(
     title="Oriagent API",
-    description="AI Text-to-Speech Backend powered by VoxCPM",
-    version="1.0.0",
+    description="AI Text-to-Speech Backend powered by VoxCPM — Supabase Auth",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -81,35 +82,25 @@ app.add_middleware(
 
 
 # ---------- Models ----------
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-
-class LoginResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    username: str
-
-
-class TTSRequest(BaseModel):
-    text: str
-    mode: str = "design"  # design | clone | ultimate
-    control_instruction: str = ""
-    prompt_text: str = ""
-    cfg_value: float = 2.0
-    normalize: bool = False
-    denoise: bool = False
-    dit_steps: int = 10
-
-
 class HealthResponse(BaseModel):
     status: str
     model: str
     engine: str
 
 
-# ---------- Routes ----------
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    role: str
+    full_name: str
+    avatar_url: str
+
+
+class UpdateRoleRequest(BaseModel):
+    role: str  # "user" or "admin"
+
+
+# ---------- Routes: Health ----------
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
@@ -118,24 +109,21 @@ async def health_check():
     return tts.health_check()
 
 
-@app.post("/api/auth/login", response_model=LoginResponse)
-async def login(req: LoginRequest):
-    """Admin login — returns JWT token."""
-    settings = get_settings()
-    if req.username != settings.admin_username or req.password != settings.admin_password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Tên đăng nhập hoặc mật khẩu không đúng",
-        )
-    token = create_access_token(req.username)
-    return LoginResponse(access_token=token, username=req.username)
-
+# ---------- Routes: Auth ----------
 
 @app.get("/api/auth/me")
-async def get_current_user(username: str = Depends(verify_token)):
-    """Get current authenticated user."""
-    return {"username": username, "role": "admin"}
+async def get_me(user: dict = Depends(get_current_user)):
+    """Get current authenticated user info (from Supabase JWT + profiles)."""
+    return {
+        "id": user["id"],
+        "email": user["email"],
+        "role": user["role"],
+        "full_name": user["full_name"],
+        "avatar_url": user["avatar_url"],
+    }
 
+
+# ---------- Routes: TTS ----------
 
 @app.post("/api/tts/generate")
 @limiter.limit("5/minute")
@@ -150,10 +138,10 @@ async def generate_tts(
     denoise: bool = Form(False),
     dit_steps: int = Form(10),
     reference_audio: Optional[UploadFile] = File(None),
-    username: str = Depends(verify_token),
+    user: dict = Depends(get_current_user),
 ):
     """
-    Generate TTS audio.
+    Generate TTS audio. Requires Supabase authentication.
 
     Accepts multipart/form-data:
     - text: target text
@@ -229,24 +217,92 @@ async def generate_tts(
         raise HTTPException(status_code=500, detail=f"Lỗi tạo audio: {str(e)}")
 
 
+# ---------- Routes: ASR ----------
+
 @app.post("/api/asr/transcribe")
 async def transcribe_audio(
     audio: UploadFile = File(...),
-    username: str = Depends(verify_token),
+    user: dict = Depends(get_current_user),
 ):
     """
     Auto-transcribe audio using VoxCPM's built-in FunASR.
-    This would call the ASR functionality on Kaggle.
     For now, returns a placeholder — full implementation requires
     adding an ASR endpoint to the Gradio app.
     """
     # TODO: Implement when Gradio API supports ASR endpoint
-    # For now, return mock
     return {
         "transcript": "Tính năng Auto Transcribe sẽ hoạt động khi ASR endpoint được thêm vào Gradio API.",
         "language": "vi",
         "duration": 0,
     }
+
+
+# ---------- Routes: Admin ----------
+
+@app.get("/api/admin/users")
+async def list_users(admin: dict = Depends(require_admin)):
+    """List all users with their profiles. Admin only."""
+    try:
+        supabase = get_supabase_admin()
+        result = supabase.table("profiles").select("*").order("created_at", desc=True).execute()
+        return {"users": result.data or []}
+    except Exception as e:
+        logger.error(f"Failed to list users: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi lấy danh sách người dùng")
+
+
+@app.patch("/api/admin/users/{user_id}/role")
+async def update_user_role(
+    user_id: str,
+    body: UpdateRoleRequest,
+    admin: dict = Depends(require_admin),
+):
+    """Change a user's role. Admin only."""
+    if body.role not in ("user", "admin"):
+        raise HTTPException(status_code=400, detail="Role phải là 'user' hoặc 'admin'")
+
+    # Prevent admin from demoting themselves
+    if user_id == admin["id"] and body.role != "admin":
+        raise HTTPException(status_code=400, detail="Không thể tự hạ quyền chính mình")
+
+    try:
+        supabase = get_supabase_admin()
+        result = supabase.table("profiles").update({"role": body.role}).eq("id", user_id).execute()
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Không tìm thấy người dùng")
+
+        return {"message": f"Đã đổi role thành '{body.role}'", "user": result.data[0]}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update role for {user_id}: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi cập nhật role")
+
+
+@app.delete("/api/admin/users/{user_id}")
+async def deactivate_user(
+    user_id: str,
+    admin: dict = Depends(require_admin),
+):
+    """Deactivate (soft delete) a user account. Admin only."""
+    # Prevent admin from deactivating themselves
+    if user_id == admin["id"]:
+        raise HTTPException(status_code=400, detail="Không thể vô hiệu hoá chính mình")
+
+    try:
+        supabase = get_supabase_admin()
+        result = supabase.table("profiles").update({"is_active": False}).eq("id", user_id).execute()
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Không tìm thấy người dùng")
+
+        return {"message": "Đã vô hiệu hoá tài khoản", "user": result.data[0]}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to deactivate user {user_id}: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi vô hiệu hoá tài khoản")
 
 
 if __name__ == "__main__":

@@ -1,17 +1,17 @@
 """
 Oriagent Backend — Configuration (Pydantic Settings)
+Supabase Auth integration
 """
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # Auth — MUST be set via .env or environment variables
-    admin_username: str = "admin"
-    admin_password: str  # No default — forces .env or env var
-    jwt_secret: str      # No default — forces .env or env var
-    jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 1440  # 24 hours
+    # Supabase Auth
+    supabase_url: str          # https://xxxxx.supabase.co
+    supabase_anon_key: str     # anon public key
+    supabase_service_key: str  # service_role key (backend only, never expose!)
+    supabase_jwt_secret: str   # JWT secret for token verification
 
     # VoxCPM AI Engine (Kaggle Gradio via Cloudflare Tunnel)
     voxcpm_gradio_url: str = "http://localhost:8808"
@@ -28,4 +28,3 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
-

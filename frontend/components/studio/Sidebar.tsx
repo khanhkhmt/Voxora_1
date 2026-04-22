@@ -1,6 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { apiGetMe, UserProfile } from "@/lib/api";
 
 interface SidebarProps {
   activeMode: string;
@@ -20,11 +23,33 @@ const COMING_SOON = [
 
 export default function Sidebar({ activeMode, onModeChange }: SidebarProps) {
   const router = useRouter();
+  const [user, setUser] = useState<UserProfile | null>(null);
 
-  const handleLogout = () => {
-    document.cookie = "voxora_token=; path=/; max-age=0";
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const profile = await apiGetMe();
+        setUser(profile);
+      } catch {
+        // User info will show fallback
+      }
+    };
+    loadUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     router.push("/");
   };
+
+  const userInitial = user?.full_name
+    ? user.full_name.charAt(0).toUpperCase()
+    : user?.email
+    ? user.email.charAt(0).toUpperCase()
+    : "?";
+
+  const displayName = user?.full_name || user?.email?.split("@")[0] || "User";
+  const roleLabel = user?.role === "admin" ? "Admin" : "User";
 
   return (
     <aside className="w-64 bg-surface-container-lowest border-r border-outline-variant/15 flex flex-col h-full">
@@ -78,17 +103,42 @@ export default function Sidebar({ activeMode, onModeChange }: SidebarProps) {
             </span>
           </div>
         ))}
+
+        {/* Admin link */}
+        {user?.role === "admin" && (
+          <>
+            <div className="my-4 border-t border-outline-variant/15" />
+            <p className="px-3 mb-2 text-[10px] font-semibold text-on-surface-variant uppercase tracking-widest">
+              Quản trị
+            </p>
+            <button
+              onClick={() => router.push("/admin")}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-voxora"
+            >
+              <span className="text-base">⚙️</span>
+              Admin Dashboard
+            </button>
+          </>
+        )}
       </nav>
 
       {/* User section */}
       <div className="px-3 py-4 border-t border-outline-variant/15">
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xs font-bold">
-            A
-          </div>
+          {user?.avatar_url ? (
+            <img
+              src={user.avatar_url}
+              alt={displayName}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xs font-bold">
+              {userInitial}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-on-surface truncate">Admin</p>
-            <p className="text-[11px] text-on-surface-variant">Unlimited access</p>
+            <p className="text-sm font-medium text-on-surface truncate">{displayName}</p>
+            <p className="text-[11px] text-on-surface-variant">{roleLabel}</p>
           </div>
           <button
             onClick={handleLogout}

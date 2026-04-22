@@ -5,20 +5,32 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
       });
@@ -26,13 +38,13 @@ export default function LoginPage() {
       if (error) throw error;
       router.push("/studio");
     } catch (err: any) {
-      setError(err.message || "Đăng nhập thất bại");
+      setError(err.message || "Đăng ký thất bại");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleRegister = async () => {
     setError("");
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -55,13 +67,13 @@ export default function LoginPage() {
             </span>
           </div>
           <p className="text-sm text-on-surface-variant">
-            Đăng nhập để truy cập Oriagent Studio
+            Tạo tài khoản miễn phí để sử dụng Oriagent Studio
           </p>
         </div>
 
         {/* Form */}
         <form
-          onSubmit={handleEmailLogin}
+          onSubmit={handleRegister}
           className="bg-surface rounded-2xl shadow-ambient-lg p-8 ghost-border"
         >
           {error && (
@@ -73,10 +85,10 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Google Login */}
+          {/* Google Register */}
           <button
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleRegister}
             className="w-full py-2.5 rounded-xl text-sm font-medium text-on-surface bg-surface-container border border-outline-variant/30 flex items-center justify-center gap-2 hover:bg-surface-container-high transition-voxora hover:scale-[1.01] active:scale-[0.99] mb-5"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -85,7 +97,7 @@ export default function LoginPage() {
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            Đăng nhập bằng Google
+            Đăng ký bằng Google
           </button>
 
           {/* Divider */}
@@ -94,7 +106,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-outline-variant/20"></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-surface px-3 text-on-surface-variant">hoặc đăng nhập bằng email</span>
+              <span className="bg-surface px-3 text-on-surface-variant">hoặc đăng ký bằng email</span>
             </div>
           </div>
 
@@ -121,7 +133,22 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Ít nhất 6 ký tự"
+                required
+                minLength={6}
+                className="w-full px-4 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-voxora"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5">
+                Xác nhận mật khẩu
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Nhập lại mật khẩu"
                 required
                 className="w-full px-4 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-voxora"
               />
@@ -138,20 +165,20 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Đang đăng nhập...
+                  Đang tạo tài khoản...
                 </span>
               ) : (
-                "Đăng nhập"
+                "Tạo tài khoản"
               )}
             </button>
           </div>
 
-          {/* Register link */}
+          {/* Login link */}
           <div className="mt-5 pt-5 border-t border-outline-variant/20 text-center">
             <p className="text-sm text-on-surface-variant">
-              Chưa có tài khoản?{" "}
-              <Link href="/register" className="text-primary font-medium hover:underline">
-                Đăng ký ngay
+              Đã có tài khoản?{" "}
+              <Link href="/login" className="text-primary font-medium hover:underline">
+                Đăng nhập
               </Link>
             </p>
           </div>

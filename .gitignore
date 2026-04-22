@@ -10,7 +10,9 @@ frontend/out/
 
 # Environment & Secrets
 .env
+.env.local
 backend/.env
+frontend/.env.local
 
 # IDE
 .idea/

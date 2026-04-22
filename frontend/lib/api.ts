@@ -1,48 +1,19 @@
 /**
  * Oriagent Frontend — API Client
- * Kết nối tới FastAPI backend
+ * Kết nối tới FastAPI backend, sử dụng Supabase Auth tokens
  */
+
+import { supabase } from "./supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
 
-// ---------- Auth ----------
+// ---------- Token Helper ----------
 
-export interface LoginResponse {
-  access_token: string;
-  token_type: string;
-  username: string;
-}
-
-export async function apiLogin(
-  username: string,
-  password: string
-): Promise<LoginResponse> {
-  const res = await fetch(`${API_BASE}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Lỗi kết nối server" }));
-    throw new Error(err.detail || "Đăng nhập thất bại");
-  }
-
-  return res.json();
-}
-
-export function saveToken(token: string) {
-  document.cookie = `oriagent_token=${token}; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
-  localStorage.setItem("oriagent_token", token);
-}
-
-export function getToken(): string | null {
-  return localStorage.getItem("oriagent_token");
-}
-
-export function removeToken() {
-  document.cookie = "oriagent_token=; path=/; max-age=0";
-  localStorage.removeItem("oriagent_token");
+export async function getToken(): Promise<string | null> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.access_token ?? null;
 }
 
 // ---------- Health ----------
@@ -56,6 +27,32 @@ export interface HealthResponse {
 export async function apiHealthCheck(): Promise<HealthResponse> {
   const res = await fetch(`${API_BASE}/api/health`);
   if (!res.ok) throw new Error("Health check failed");
+  return res.json();
+}
+
+// ---------- Auth / User ----------
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: string;
+  full_name: string;
+  avatar_url: string;
+}
+
+export async function apiGetMe(): Promise<UserProfile> {
+  const token = await getToken();
+  if (!token) throw new Error("Chưa đăng nhập");
+
+  const res = await fetch(`${API_BASE}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Lỗi xác thực" }));
+    throw new Error(err.detail || "Lỗi lấy thông tin user");
+  }
+
   return res.json();
 }
 
@@ -74,7 +71,7 @@ export interface TTSParams {
 }
 
 export async function apiGenerateTTS(params: TTSParams): Promise<Blob> {
-  const token = getToken();
+  const token = await getToken();
   if (!token) throw new Error("Chưa đăng nhập");
 
   const formData = new FormData();
@@ -110,7 +107,7 @@ export async function apiGenerateTTS(params: TTSParams): Promise<Blob> {
 // ---------- ASR ----------
 
 export async function apiTranscribe(audioFile: File): Promise<string> {
-  const token = getToken();
+  const token = await getToken();
   if (!token) throw new Error("Chưa đăng nhập");
 
   const formData = new FormData();
@@ -127,4 +124,71 @@ export async function apiTranscribe(audioFile: File): Promise<string> {
   if (!res.ok) throw new Error("Transcribe failed");
   const data = await res.json();
   return data.transcript;
+}
+
+// ---------- Admin ----------
+
+export interface ProfileRecord {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string;
+  role: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function apiGetUsers(): Promise<ProfileRecord[]> {
+  const token = await getToken();
+  if (!token) throw new Error("Chưa đăng nhập");
+
+  const res = await fetch(`${API_BASE}/api/admin/users`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Lỗi" }));
+    throw new Error(err.detail || "Lỗi lấy danh sách users");
+  }
+
+  const data = await res.json();
+  return data.users;
+}
+
+export async function apiUpdateUserRole(
+  userId: string,
+  role: string
+): Promise<void> {
+  const token = await getToken();
+  if (!token) throw new Error("Chưa đăng nhập");
+
+  const res = await fetch(`${API_BASE}/api/admin/users/${userId}/role`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ role }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Lỗi" }));
+    throw new Error(err.detail || "Lỗi cập nhật role");
+  }
+}
+
+export async function apiDeactivateUser(userId: string): Promise<void> {
+  const token = await getToken();
+  if (!token) throw new Error("Chưa đăng nhập");
+
+  const res = await fetch(`${API_BASE}/api/admin/users/${userId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Lỗi" }));
+    throw new Error(err.detail || "Lỗi vô hiệu hoá user");
+  }
 }

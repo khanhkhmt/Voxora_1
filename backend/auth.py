@@ -1,42 +1,110 @@
 """
-Oriagent Backend — Auth utilities (JWT)
+Oriagent Backend — Auth utilities (Supabase JWT verification)
+Verifies JWT tokens issued by Supabase Auth and retrieves user role from profiles table.
 """
-from datetime import datetime, timedelta, timezone
+import logging
 from jose import JWTError, jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from supabase import create_client, Client
+
 from config import get_settings
 
+logger = logging.getLogger("oriagent.auth")
 security = HTTPBearer()
 
-
-def create_access_token(username: str) -> str:
-    """Create JWT access token for authenticated user."""
-    settings = get_settings()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
-    payload = {
-        "sub": username,
-        "exp": expire,
-        "iat": datetime.now(timezone.utc),
-    }
-    return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+# Cache Supabase admin client (service_role)
+_supabase_admin: Client | None = None
 
 
-def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
-    """Verify JWT token and return username. Used as FastAPI dependency."""
+def get_supabase_admin() -> Client:
+    """Get Supabase admin client (uses service_role key for full access)."""
+    global _supabase_admin
+    if _supabase_admin is None:
+        settings = get_settings()
+        _supabase_admin = create_client(settings.supabase_url, settings.supabase_service_key)
+    return _supabase_admin
+
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> dict:
+    """
+    Verify Supabase JWT token and return user info.
+    Returns: {"id": str, "email": str, "role": str}
+    Used as FastAPI dependency.
+    """
     settings = get_settings()
     token = credentials.credentials
+
     try:
-        payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
-        username: str = payload.get("sub")
-        if username is None:
+        # Decode JWT using Supabase JWT secret
+        payload = jwt.decode(
+            token,
+            settings.supabase_jwt_secret,
+            algorithms=["HS256"],
+            audience="authenticated",
+        )
+        user_id = payload.get("sub")
+        email = payload.get("email")
+
+        if not user_id:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token payload",
+                detail="Token không hợp lệ: thiếu user ID",
             )
-        return username
-    except JWTError:
+
+    except JWTError as e:
+        logger.warning(f"JWT verification failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired or invalid",
+            detail="Token hết hạn hoặc không hợp lệ",
         )
+
+    # Query role from profiles table
+    try:
+        supabase = get_supabase_admin()
+        result = supabase.table("profiles").select("role, is_active, full_name, avatar_url").eq("id", user_id).single().execute()
+        profile = result.data
+
+        if not profile:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Profile không tồn tại. Vui lòng liên hệ admin.",
+            )
+
+        if not profile.get("is_active", True):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Tài khoản đã bị vô hiệu hoá.",
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to query profile for user {user_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Lỗi truy vấn thông tin người dùng",
+        )
+
+    return {
+        "id": user_id,
+        "email": email,
+        "role": profile.get("role", "user"),
+        "full_name": profile.get("full_name", ""),
+        "avatar_url": profile.get("avatar_url", ""),
+    }
+
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    """
+    FastAPI dependency: only allows admin users.
+    Must be used after get_current_user.
+    """
+    if user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Chỉ admin mới có quyền truy cập",
+        )
+    return user
